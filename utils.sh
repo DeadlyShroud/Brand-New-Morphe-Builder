@@ -1774,12 +1774,14 @@ build_rv() {
 			fi
 		fi
 
-		if [ "${args[enable_update_checks]}" = "true" ] && [ "$build_mode" = "apk" ]; then
-			if [ -n "${GITHUB_REPOSITORY-}" ]; then
-				if [ "${GITHUB_REPOSITORY}" = "j-hc/revanced-magisk-module" ]; then
+		if [[ "${args[enable_update_checks]:-}" == "true" && "$build_mode" == "apk" ]]; then
+			if [[ -n "${GITHUB_REPOSITORY:-}" ]]; then
+				if [[ -f "${BIN_DIR}/jhc-update-check.mpp" ]]; then
+					patcher_args+=("-p ${BIN_DIR}/jhc-update-check.mpp -e 'j-hc Update Check'")
+				elif [[ "${GITHUB_REPOSITORY}" == "j-hc/revanced-magisk-module" ]]; then
 					patcher_args+=("-p ${BIN_DIR}/jhc-update-check.mpp -e 'j-hc Update Check'")
 				else
-					wpr "enable-update-checks is only implemented for j-hc/revanced-magisk-module"
+					wpr "enable-update-checks is enabled, but '${BIN_DIR}/jhc-update-check.mpp' was not found."
 				fi
 			fi
 		fi

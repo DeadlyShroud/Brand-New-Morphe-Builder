@@ -28,7 +28,11 @@ This builder is an advanced, hardened fork of [j-hc's revanced-magisk-module](ht
 * **Multi-Bundle Patch Support**: Combine multiple independent patch repositories (e.g., `crimera/piko` + `inotia00/x-shim`) in a single compilation run for an app target.
 * **5-Tier Resilient Download Engine**: Automatically resolves APKs using an intelligent fallback pipeline:
   $$\text{APKMirror} \longrightarrow \text{Uptodown} \longrightarrow \text{GitHub Releases} \longrightarrow \text{Direct DL} \longrightarrow \text{Archive.org}$$
+* **Advanced Python Scraping Engine**: Features reliable APK retrieval without workflow interruptions.
+* **Automated Split-APK Merging**: Natively downloads and extracts `.apkm`, `.xapk`, and `.zip` bundles, merging them dynamically before patching.
 * **Explicit Package ID Overrides (`pkg-name`)**: Eliminates scraping dependencies and guarantees continuous builds even during anti-bot protection updates.
+* **Smart Versioning & AAPT2 Badging**: Autonomously bypasses strict version mismatches (e.g., `-SECONDARY` suffixes) via automated `--force` flags and extracts exact `versionName` strings via `aapt2` to ensure perfect Magisk/KernelSU module mounting.
+* **In-App Update Checks**: Supports OTA module update notifications natively via `enable-update-checks`.
 * **Multi-Architecture Matrix Compilation (`arch = "both"`)**: Concurrently packages architecture-tailored APKs and universal root modules (`arm64-v8a`, `armeabi-v7a`, `x86_64`) with automated odex optimization.
 
 ---
@@ -194,4 +198,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see https://www.gnu.org/licenses/
+along with this program. If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/)

@@ -41,6 +41,8 @@ DEF_CLI_VER=$(toml_get "$main_config_t" cli-version) || DEF_CLI_VER="latest"
 DEF_PATCHES_SRC=$(toml_get "$main_config_t" patches-source) || DEF_PATCHES_SRC="github:MorpheApp/morphe-patches"
 DEF_CLI_SRC=$(toml_get "$main_config_t" cli-source) || DEF_CLI_SRC="github:MorpheApp/morphe-desktop"
 DEF_RV_BRAND=$(toml_get "$main_config_t" rv-brand) || DEF_RV_BRAND="ReVanced"
+DEF_ENABLE_UPDATE_CHECKS=$(toml_get "$main_config_t" enable-update-checks) || DEF_ENABLE_UPDATE_CHECKS="false"
+
 mkdir -p "$TEMP_DIR" "$BUILD_DIR"
 
 if [ "${2-}" = "--config-update" ]; then
@@ -99,7 +101,7 @@ for table_name in $(toml_get_table_names); do
 	app_args[cli]=$cli_jar
 	app_args[ptjar]=$patches_jar
 	app_args[rv_brand]=$(toml_get "$t" rv-brand) || app_args[rv_brand]=$DEF_RV_BRAND
-	app_args[enable_update_checks]=$(toml_get "$t" enable-update-checks) && vtf "${app_args[enable_update_checks]}" "enable-update-checks" || app_args[enable_update_checks]="false"
+	app_args[enable_update_checks]=$(toml_get "$t" enable-update-checks) && vtf "${app_args[enable_update_checks]}" "enable-update-checks" || app_args[enable_update_checks]=$DEF_ENABLE_UPDATE_CHECKS
 
 	app_args[excluded_patches]=$(toml_get "$t" excluded-patches) || app_args[excluded_patches]=""
 	if [ -n "${app_args[excluded_patches]}" ] && [[ ${app_args[excluded_patches]} != *'"'* ]]; then abort "patch names inside excluded-patches must be quoted"; fi

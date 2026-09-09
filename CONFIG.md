@@ -71,6 +71,7 @@ cli-version = "latest"               # 'latest', 'dev', or a specific release ta
 | `github-dlurl` | `string` | `""` | GitHub Release tag URL holding raw APK/APKM assets. |
 | `archive-dlurl` | `string` | `""` | Archive.org APK repository directory URL. |
 | `direct-dlurl` | `string` | `""` | Direct link pointing to a standalone `.apk` or `.apkm` file. |
+| `enable-update-checks` | `boolean` | `false` | Enables in-app update checks for `apk` build mode (requires `bin/jhc-update-check.mpp`). |
 
 ---
 

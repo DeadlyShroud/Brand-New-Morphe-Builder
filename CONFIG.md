@@ -34,6 +34,7 @@ parallel-jobs = 1                    # Enforces sequential execution for live Gi
 compression-level = 9                # Module zip compression level (0–9)
 remove-rv-integrations-checks = true # Automatically patch shared integration checks
 enable-update-checks = true          # enables in-app update check for `apk` build-mode. default: false
+patcher-args = "--continue-on-error" # Use to skip failed patches and continue patching 
 
 # Default tool sources (Supports 'github:' and 'gitlab:' prefixes)
 patches-source = "github:MorpheApp/morphe-patches"

@@ -42,6 +42,7 @@ DEF_PATCHES_SRC=$(toml_get "$main_config_t" patches-source) || DEF_PATCHES_SRC="
 DEF_CLI_SRC=$(toml_get "$main_config_t" cli-source) || DEF_CLI_SRC="github:MorpheApp/morphe-desktop"
 DEF_RV_BRAND=$(toml_get "$main_config_t" rv-brand) || DEF_RV_BRAND="ReVanced"
 DEF_ENABLE_UPDATE_CHECKS=$(toml_get "$main_config_t" enable-update-checks) || DEF_ENABLE_UPDATE_CHECKS="false"
+DEF_PATCHER_ARGS=$(toml_get "$main_config_t" patcher-args) || DEF_PATCHER_ARGS=""
 
 mkdir -p "$TEMP_DIR" "$BUILD_DIR"
 
@@ -110,7 +111,18 @@ for table_name in $(toml_get_table_names); do
 	app_args[exclusive_patches]=$(toml_get "$t" exclusive-patches) && vtf "${app_args[exclusive_patches]}" "exclusive-patches" || app_args[exclusive_patches]=false
 	app_args[version]=$(toml_get "$t" version) || app_args[version]="auto"
 	app_args[app_name]=$(toml_get "$t" app-name) || app_args[app_name]=$table_name
-	app_args[patcher_args]=$(toml_get "$t" patcher-args) || app_args[patcher_args]=""
+
+	# Merge global patcher-args and app-specific patcher-args
+	local cur_patcher_args
+	cur_patcher_args=$(toml_get "$t" patcher-args) || cur_patcher_args=""
+	if [ -n "$DEF_PATCHER_ARGS" ] && [ -n "$cur_patcher_args" ]; then
+		app_args[patcher_args]="$DEF_PATCHER_ARGS $cur_patcher_args"
+	elif [ -n "$cur_patcher_args" ]; then
+		app_args[patcher_args]="$cur_patcher_args"
+	else
+		app_args[patcher_args]="$DEF_PATCHER_ARGS"
+	fi
+
 	app_args[table]=$table_name
 	app_args[build_mode]=$(toml_get "$t" build-mode) && {
 		if ! isoneof "${app_args[build_mode]}" both apk module; then

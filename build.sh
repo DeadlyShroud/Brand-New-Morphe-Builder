@@ -150,9 +150,9 @@ for table_name in $(toml_get_table_names); do
 
 	# Merge global patcher-args and app-specific patcher-args
 	cur_patcher_args=$(toml_get "$t" patcher-args) || cur_patcher_args=""
-	if [ -n "$DEF_PATCHER_ARGS" ] && [ -n "$cur_patcher_args" ]; then
+	if [[ -n "$DEF_PATCHER_ARGS" ]] && [[ -n "$cur_patcher_args" ]]; then
 		app_args[patcher_args]="$DEF_PATCHER_ARGS $cur_patcher_args"
-	elif [ -n "$cur_patcher_args" ]; then
+	elif [[ -n "$cur_patcher_args" ]]; then
 		app_args[patcher_args]="$cur_patcher_args"
 	else
 		app_args[patcher_args]="$DEF_PATCHER_ARGS"

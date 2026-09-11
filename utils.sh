@@ -1794,15 +1794,16 @@ build_rv() {
 		if [[ "${args[enable_update_checks]:-}" == "true" && "$build_mode" == "apk" ]]; then
 			local update_patch="${UPDATE_PATCH_FILE:-$TEMP_DIR/tanjid-update-check.mpp}"
 			if [[ -f "$update_patch" && -s "$update_patch" ]]; then
-				patcher_args+=("-p $update_patch" "-e 'TanJid Update Check'")
+				patcher_args+=("-p" "'$update_patch'" "-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'")
 			elif [[ -f "${BIN_DIR}/tanjid-update-check.mpp" ]]; then
-				patcher_args+=("-p ${BIN_DIR}/tanjid-update-check.mpp -e 'TanJid Update Check'")
+				patcher_args+=("-p" "'${BIN_DIR}/tanjid-update-check.mpp'" "-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'")
 			elif [[ -f "${BIN_DIR}/jhc-update-check.mpp" ]]; then
-				patcher_args+=("-p ${BIN_DIR}/jhc-update-check.mpp -e 'j-hc Update Check'")
+				patcher_args+=("-p" "'${BIN_DIR}/jhc-update-check.mpp'" "-e" "'j-hc Update Check'")
 			else
 				wpr "enable-update-checks is enabled for ${table}, but custom update check patch was not found."
 			fi
 		fi
+
 
 
 		local stock_apk_to_patch="${stock_apk}.stripped.apk"

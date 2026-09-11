@@ -9,7 +9,8 @@ source utils.sh
 for func_name in _req req gh_req gh_dl build_rv patches_list patches_list_versions toml_get toml_get_table toml_get_table_names toml_get_table_main dl_direct dl_github dl_archive dl_apkmirror dl_uptodown get_direct_vers get_github_vers get_archive_vers get_apkmirror_vers get_uptodown_vers get_direct_pkg_name get_github_pkg_name get_archive_pkg_name get_apkmirror_pkg_name get_uptodown_pkg_name get_direct_resp get_github_resp get_archive_resp get_apkmirror_resp get_uptodown_resp apkmirror_search merge_splits check_sig patch_apk isoneof log get_highest_ver semver_validate get_patch_last_supported_ver list_args join_args module_config module_prop abort epr wpr pr java run_python_backend; do
     export -f "$func_name" 2>/dev/null || true
 done
-export MODULE_TEMPLATE_DIR CWD TEMP_DIR BIN_DIR BUILD_DIR DL_SRCS GH_HEADER NEXT_VER_CODE OS
+export UPDATE_REPO_PAT="${UPDATE_REPO_PAT:-}"
+export MODULE_TEMPLATE_DIR CWD TEMP_DIR BIN_DIR BUILD_DIR DL_SRCS GH_HEADER NEXT_VER_CODE OS UPDATE_REPO_PAT
 # ---------------------------------------
 
 trap "abort" INT
@@ -67,6 +68,41 @@ gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm64/cmpr" "https://github.com/j-hc/cmpr/rele
 gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-armeabi-v7a"
 gh_dl "${MODULE_TEMPLATE_DIR}/bin/x86/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86"
 gh_dl "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86_64"
+
+# Pre-fetch custom update check patch if enabled globally or in any app table
+UPDATE_PATCH_FILE="${TEMP_DIR}/tanjid-update-check.mpp"
+export UPDATE_PATCH_FILE
+if [[ "$DEF_ENABLE_UPDATE_CHECKS" == "true" ]] || grep -qE 'enable-update-checks\s*=\s*true' "${1:-config.toml}" 2>/dev/null; then
+	if [[ ! -f "$UPDATE_PATCH_FILE" ]]; then
+		pr "Getting TanJid Update Check patch from dj-tanjid/tanjid-morphe-update-check"
+		auth_token="${UPDATE_REPO_PAT:-${GITHUB_TOKEN:-}}"
+		
+		# Attempt download via gh CLI (works for both public and private repositories)
+		if ! GH_TOKEN="$auth_token" gh release download latest -R "dj-tanjid/tanjid-morphe-update-check" -p "*.mpp" -D "$TEMP_DIR" --clobber >/dev/null 2>&1; then
+			# Fallback to direct GitHub API stream
+			auth_header=()
+			[[ -n "$auth_token" ]] && auth_header=(-H "Authorization: token ${auth_token}")
+			resp=$(curl -sSL "${auth_header[@]}" "https://api.github.com/repos/dj-tanjid/tanjid-morphe-update-check/releases/latest" 2>/dev/null) || true
+			asset_api_url=$(jq -e -r '.assets[0].url // empty' <<<"$resp" 2>/dev/null) || true
+			if [[ -n "$asset_api_url" ]]; then
+				curl -sSL "${auth_header[@]}" -H "Accept: application/octet-stream" "$asset_api_url" -o "$UPDATE_PATCH_FILE" 2>/dev/null || true
+			fi
+		fi
+
+		# Normalize downloaded filename if named differently
+		downloaded_mpp=$(find "$TEMP_DIR" -maxdepth 1 -name "*update-check*.mpp" 2>/dev/null | head -1 || true)
+		if [[ -n "$downloaded_mpp" && "$downloaded_mpp" != "$UPDATE_PATCH_FILE" ]]; then
+			cp -f "$downloaded_mpp" "$UPDATE_PATCH_FILE"
+		fi
+
+		if [[ -f "$UPDATE_PATCH_FILE" && -s "$UPDATE_PATCH_FILE" ]]; then
+			pr "Successfully loaded TanJid Update Check patch"
+		else
+			wpr "Could not download update check patch from dj-tanjid/tanjid-morphe-update-check. (Ensure UPDATE_REPO_PAT secret is configured if repository is private)."
+			rm -f "$UPDATE_PATCH_FILE"
+		fi
+	fi
+fi
 
 # Terminal banner for clear live logging visibility without breaking stream
 print_banner() {
@@ -201,13 +237,11 @@ log "\n<br>\n"
 
 log "Patches and CLI Sources :\n"
 if [ -s "${TEMP_DIR}/patches_changelog.md" ]; then
-	# Prepend '>' only to the first line, and indent the rest cleanly
 	sed '1s/^[ >]*/> /; 2,$s/^[ >]*/ /' "${TEMP_DIR}/patches_changelog.md" >> build.md || true
 	log ""
 fi
 
 if [ -s "${TEMP_DIR}/cli_changelog.md" ]; then
-	# Prepend '>' to the CLI string
 	sed 's/^[ >]*/> /' "${TEMP_DIR}/cli_changelog.md" >> build.md || true
 	log ""
 fi

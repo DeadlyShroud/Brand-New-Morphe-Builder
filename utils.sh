@@ -1794,12 +1794,12 @@ build_rv() {
 		if [[ "${args[enable_update_checks]:-}" == "true" && "$build_mode" == "apk" ]]; then
 			local update_patch="${UPDATE_PATCH_FILE:-$TEMP_DIR/tanjid-update-check.mpp}"
 			if [[ -f "$update_patch" && -s "$update_patch" ]]; then
-				# PREPEND to ensure the JVM prioritizes our class over upstream's default class
-				patcher_args=("-p" "'$update_patch'" "-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'" "${patcher_args[@]}")
+				# APPEND the arguments so they attach to the correct bundles, preserving config.toml inclusions/exclusions
+				patcher_args=("${patcher_args[@]}" "-p" "'$update_patch'" "-e" "'TanJid Update Check'")
 			elif [[ -f "${BIN_DIR}/tanjid-update-check.mpp" ]]; then
-				patcher_args=("-p" "'${BIN_DIR}/tanjid-update-check.mpp'" "-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'" "${patcher_args[@]}")
+				patcher_args=("${patcher_args[@]}" "-p" "'${BIN_DIR}/tanjid-update-check.mpp'" "-e" "'TanJid Update Check'")
 			elif [[ -f "${BIN_DIR}/jhc-update-check.mpp" ]]; then
-				patcher_args=("-p" "'${BIN_DIR}/jhc-update-check.mpp'" "-e" "'j-hc Update Check'" "${patcher_args[@]}")
+				patcher_args=("${patcher_args[@]}" "-p" "'${BIN_DIR}/jhc-update-check.mpp'" "-e" "'j-hc Update Check'")
 			else
 				wpr "enable-update-checks is enabled for ${table}, but custom update check patch was not found."
 			fi

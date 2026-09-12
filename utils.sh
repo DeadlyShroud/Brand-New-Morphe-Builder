@@ -1547,6 +1547,7 @@ dl_archive() {
 	fi
 }
 get_archive_resp() {
+	__ARCHIVE_PKG_NAME__=$(awk -F/ '{print $NF}' <<<"$1")
 	local r
 	r=$(req "$1" -) || return 1
 	__ARCHIVE_RESP__=$(sed -n 's;^<a href="\(.*\)"[^"]*;\1;p' <<<"$r")
@@ -1700,8 +1701,8 @@ build_rv() {
 		for dl_p in "${DL_SRCS[@]}"; do
 			if [[ -z "${args[${dl_p}_dlurl]:-}" ]]; then continue; fi
 			pr "Downloading '${table}' from '${dl_p}'"
-			if ! isoneof $dl_p "${tried_dl[@]}"; then
-				if ! get_${dl_p}_resp "${args[${dl_p}_dlurl]}"; then
+			if ! isoneof "$dl_p" "${tried_dl[@]}"; then
+				if ! get_"${dl_p}"_resp "${args[${dl_p}_dlurl]}"; then
 					epr "ERROR: Could not get '${table}' from '${dl_p}'"
 					continue
 				fi

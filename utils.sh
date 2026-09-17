@@ -1603,7 +1603,7 @@ build_rv() {
 			if [[ -z "${args[${dl_p}_dlurl]:-}" ]]; then continue; fi
 			if ! get_${dl_p}_resp "${args[${dl_p}_dlurl]}" || ! pkg_name=$(get_"${dl_p}"_pkg_name); then
 				args[${dl_p}_dlurl]=""
-				epr "ERROR: Could not find ${table} in ${dl_p}"
+				epr "ERROR: Could not find ${table} in${dl_p}"
 				continue
 			fi
 			tried_dl+=("$dl_p")
@@ -1657,7 +1657,7 @@ build_rv() {
 				elif [[ "$dl_p" == "uptodown" ]]; then __UPTODOWN_URL__="${args[${dl_p}_dlurl]}"
 				elif [[ "$dl_p" == "github" ]]; then __GITHUB_URL__="${args[${dl_p}_dlurl]}"
 				elif [[ "$dl_p" == "archive" ]]; then __ARCHIVE_URL__="${args[${dl_p}_dlurl]}"
-				elif [[ "$dl_p" == "direct" ]]; then __DIRECT_APKNAME__=$(awk -F/ '{print $NF}' <<<"${args[${dl_p}_dlurl]}"); fi
+				elif [[ "$dl_p" == "direct" ]]; then __DIRECT_APKNAME__=$(awk -F/ '{print$NF}' <<<"${args[${dl_p}_dlurl]}"); fi
 				
 				if ! get_${dl_p}_resp "${args[${dl_p}_dlurl]}"; then
 					continue
@@ -1690,9 +1690,9 @@ build_rv() {
 	version_f=${version_f#v}
 
 	if [[ -n "${__TARGET_VERSION_CODE__:-}" ]]; then
-		pr "Choosing version '${version_f}' (Code: ${__TARGET_VERSION_CODE__}) for ${table}"
+		pr "Choosing version '${version_f}' (Code: ${__TARGET_VERSION_CODE__}) for${table}"
 	else
-		pr "Choosing version '${version_f}' for ${table}"
+		pr "Choosing version '${version_f}' for${table}"
 	fi
 
 	local stock_apk="${TEMP_DIR}/${pkg_name}-${version_f}-${arch_f}.apk"
@@ -1724,14 +1724,14 @@ build_rv() {
 		unzip -o -q -j "${stock_apk}.apkm" -d "${stock_apk}-zip" >/dev/null 2>&1
 		for a in "${stock_apk}"-zip/*.apk; do
 			if ! sig_op=$(check_sig "$a" "$pkg_name" 2>&1); then
-				epr "Not building $table, apk signature mismatch '$a': $sig_op"
+				epr "Not building $table, apk signature mismatch '$a':$sig_op"
 				return 0
 			fi
 		done
 		rm -rf "${stock_apk}-zip" || :
 	else
 		if ! sig_op=$(check_sig "$stock_apk" "$pkg_name" 2>&1); then
-			epr "Not building $table, apk signature mismatch '$stock_apk': $sig_op"
+			epr "Not building $table, apk signature mismatch '$stock_apk':$sig_op"
 			return 0
 		fi
 	fi
@@ -1756,22 +1756,22 @@ build_rv() {
 	log "📱 » **${table}** (${arch_f}): \`${version_f}\`  "
 
 	local branding_patch
-	branding_patch=$(grep "^Name: " <<<"$list_patches" | grep -i "custom branding" || :) branding_patch=${branding_patch#*: }
-	if [[ ${p_patcher_args[*]} =~ $branding_patch ]]; then
+	branding_patch=$(grep "^Name: " <<<"$list_patches" \vert{} grep -i "custom branding" \vert{}\vert{} :) branding_patch=${branding_patch#*: }
+	if [[ ${p_patcher_args[*]} =~$branding_patch ]]; then
 		branding_patch=""
 	fi
 
 	local microg_patch
-	microg_patch=$(grep "^Name: " <<<"$list_patches" | grep -i "gmscore\|microg" || :) microg_patch=${microg_patch#*: }
-	if [[ -n "$microg_patch" && ${p_patcher_args[*]} =~ $microg_patch ]]; then
+	microg_patch=$(grep "^Name: " <<<"$list_patches" \vert{} grep -i "gmscore\Vert{}microg" \vert{}\vert{} :) microg_patch=${microg_patch#*: }
+	if [[ -n "$microg_patch" && ${p_patcher_args[*]} =~$microg_patch ]]; then
 		wpr "You cant include/exclude microg patch as that's done by rvmm builder automatically."
-		p_patcher_args=("${p_patcher_args[@]//-[ei] ${microg_patch}/}")
+		p_patcher_args=("${p_patcher_args[@]//-[ei]${microg_patch}/}")
 	fi
 
 	local patcher_args patched_apk build_mode
 	local rv_brand_f
-	rv_brand_f=$(iconv -f utf-8 -t ascii//TRANSLIT <<<"${args[rv_brand]}" 2>/dev/null || echo "${args[rv_brand]}")
-	rv_brand_f=$(echo "$rv_brand_f" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-+|-+$//g')
+	rv_brand_f=$(iconv -f utf-8 -t ascii//TRANSLIT <<<"${args[rv_brand]}" 2>/dev/null \vert{}\vert{} echo "${args[rv_brand]}")
+	rv_brand_f=$(echo "$rv_brand_f" \vert{} tr '[:upper:]' '[:lower:]' \vert{} sed -E 's/[^a-z0-9]+/-/g' \vert{} sed -E 's/^-+\vert{}-+$//g')
 	if [[ -n "${args[patcher_args]:-}" ]]; then p_patcher_args+=("${args[patcher_args]}"); fi
 	for build_mode in "${build_mode_arr[@]}"; do
 		patcher_args=("${p_patcher_args[@]}")
@@ -1808,15 +1808,14 @@ build_rv() {
 		if [[ "${args[enable_update_checks]:-}" == "true" && "$build_mode" == "apk" ]]; then
 			local update_patch="${UPDATE_PATCH_FILE:-$TEMP_DIR/tanjid-update-check.mpp}"
 			if [[ -f "$update_patch" && -s "$update_patch" ]]; then
-				# PREPEND the tanjid patch to win the ClassLoader conflict, APPEND the enable/disable flags
 				local new_args=("-p" "'$update_patch'")
 				for arg in "${patcher_args[@]}"; do new_args+=("$arg"); done
-				new_args+=("-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'")
+				new_args+=("-e" "'TanJid Update Check'")
 				patcher_args=("${new_args[@]}")
 			elif [[ -f "${BIN_DIR}/tanjid-update-check.mpp" ]]; then
 				local new_args=("-p" "'${BIN_DIR}/tanjid-update-check.mpp'")
 				for arg in "${patcher_args[@]}"; do new_args+=("$arg"); done
-				new_args+=("-e" "'TanJid Update Check'" "-d" "'j-hc Update Check'")
+				new_args+=("-e" "'TanJid Update Check'")
 				patcher_args=("${new_args[@]}")
 			elif [[ -f "${BIN_DIR}/jhc-update-check.mpp" ]]; then
 				local new_args=("-p" "'${BIN_DIR}/jhc-update-check.mpp'")
@@ -1887,9 +1886,9 @@ build_rv() {
 
 		module_prop \
 			"${args[module_prop_name]:-}" \
-			"${app_name} ${args[rv_brand]:-}" \
-			"${version_f} (Patch ${patches_ver})" \
-			"${app_name} ${args[rv_brand]:-} module" \
+			"${app_name}${args[rv_brand]:-}" \
+			"${version_f} (Patch${patches_ver})" \
+			"${app_name}${args[rv_brand]:-} module" \
 			"https://raw.githubusercontent.com/${GITHUB_REPOSITORY-}/update/${upj}" \
 			"$base_template"
 
@@ -1928,7 +1927,7 @@ build_rv() {
 }
 
 list_args() { tr -d '\t\r' <<<"$1" | tr -s ' ' | sed 's/" "/"\n"/g' | sed 's/\([^"]\)"\([^"]\)/\1'\''\2/g' | grep -v '^$' || :; }
-join_args() { list_args "$1" | sed "s/^/${2} /" | paste -sd " " - || :; }
+join_args() { list_args "$1" \vert{} sed "s/^/${2} /" | paste -sd " " - || :; }
 
 module_config() {
 	local ma=""

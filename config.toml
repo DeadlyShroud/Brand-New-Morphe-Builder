@@ -10,7 +10,7 @@ patcher-args = "--continue-on-error"
 [YouTube-Morphe]
 enabled = true
 app-name = "YouTube"
-patches-source = "MorpheApp/morphe-patches"
+patches-source = ["github:MorpheApp/morphe-patches", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "MorpheApp/morphe-desktop"
 rv-brand = "Morphe"
 build-mode = "both" # Options 'apk', 'module', or 'both'
@@ -27,7 +27,9 @@ excluded-patches = """\
     'Custom branding icon for YouTube' \
     'Custom branding' \
     """
-# included-patches = ""
+included-patches = """\
+    'TanJid Update Check' \
+    """
 patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
 uptodown-dlurl = "https://youtube.en.uptodown.com/android"
@@ -37,7 +39,7 @@ github-dlurl = "https://github.com/dj-tanjid/AppRepo/releases/tag/com.google.and
 [YT-Music-Morphe]
 enabled = true
 app-name = "YT Music"
-patches-source = "MorpheApp/morphe-patches"
+patches-source = ["github:MorpheApp/morphe-patches", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "MorpheApp/morphe-desktop"
 rv-brand = "Morphe"
 build-mode = "both" # Options 'apk', 'module', or 'both'
@@ -52,7 +54,9 @@ excluded-patches = """\
     'Custom branding icon for YouTube Music' \
     'Custom branding' \
     """
-# included-patches = ""
+included-patches = """\
+    'TanJid Update Check' \
+    """
 patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube-music"
 uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
@@ -100,6 +104,7 @@ included-patches = """\
     'Remove screenshot restriction' \
     'Remove screen capture restriction' \
     'Spoof features' \
+    'TanJid Update Check' \
     """
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/photos"
 uptodown-dlurl = "https://google-photos.en.uptodown.com/android"
@@ -119,6 +124,7 @@ build-mode = "both" # Options 'apk', 'module', or 'both'
 included-patches = """\
     'AMOLED dark theme' \
     'Spoof features' \
+    'TanJid Update Check' \
     """
 # patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/photos"
@@ -138,6 +144,7 @@ version = "latest"
 build-mode = "both" # Options 'apk', 'module', or 'both'
 included-patches = """\
     'Spoof features' \
+    'TanJid Update Check' \
     """
 # patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/photos"
@@ -253,7 +260,7 @@ uptodown-dlurl = "https://threads.en.uptodown.com/android"
 [Twitter-Piko]
 enabled = false
 app-name = "Twitter"
-patches-source = "github:crimera/piko"
+patches-source = ["github:crimera/piko", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "github:MorpheApp/morphe-desktop"
 rv-brand = "Piko"
 build-mode = "apk" # Options 'apk', 'module', or 'both'
@@ -265,6 +272,7 @@ included-patches = """\
     'Bring back twitter' \
     'Browse tweet object' \
     'Dynamic color' \
+    'TanJid Update Check' \
     """
 apkmirror-dlurl = "https://www.apkmirror.com/apk/x-corp/twitter"
 uptodown-dlurl = "https://twitter.en.uptodown.com/android"
@@ -274,7 +282,7 @@ github-dlurl = "https://github.com/dj-tanjid/AppRepo/releases/tag/com.twitter.an
 [X-Piko]
 enabled = false
 app-name = "X"
-patches-source = "github:crimera/piko"
+patches-source = ["github:crimera/piko", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "github:MorpheApp/morphe-desktop"
 rv-brand = "Piko"
 build-mode = "apk" # Options 'apk', 'module', or 'both'
@@ -294,7 +302,7 @@ github-dlurl = "https://github.com/dj-tanjid/AppRepo/releases/tag/com.twitter.an
 [Twitter-Piko-NewX]
 enabled = true
 app-name = "Twitter"
-patches-source = "github:crimera/piko-newx"
+patches-source = ["github:crimera/piko-newx", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "github:MorpheApp/morphe-desktop"
 rv-brand = "Piko-NewX"
 build-mode = "apk" # Options 'apk', 'module', or 'both'
@@ -305,6 +313,7 @@ include-stock = "split" # Options 'split', 'merged', or 'disable'
 included-patches = """\
     'NewX: Restore Twitter branding' \
     'NewX: Browse tweet object' \
+    'TanJid Update Check' \
     """
 apkmirror-dlurl = "https://www.apkmirror.com/apk/x-corp/twitter"
 uptodown-dlurl = "https://twitter.en.uptodown.com/android"
@@ -314,7 +323,7 @@ github-dlurl = "https://github.com/dj-tanjid/AppRepo/releases/tag/com.twitter.an
 [X-Piko-NewX]
 enabled = true
 app-name = "X"
-patches-source = "github:crimera/piko-newx"
+1patches-source = ["github:crimera/piko-newx", "github:dj-tanjid/tanjid-morphe-update-check"]
 cli-source = "github:MorpheApp/morphe-desktop"
 rv-brand = "Piko-NewX"
 build-mode = "apk" # Options 'apk', 'module', or 'both'
@@ -324,6 +333,7 @@ include-stock = "split" # Options 'split', 'merged', or 'disable'
 # patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 included-patches = """\
     'NewX: Browse tweet object' \
+    'TanJid Update Check' \
     """
 apkmirror-dlurl = "https://www.apkmirror.com/apk/x-corp/twitter"
 uptodown-dlurl = "https://twitter.en.uptodown.com/android"

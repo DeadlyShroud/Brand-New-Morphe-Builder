@@ -8,7 +8,8 @@ BUILD_DIR="build"
 # Prioritized source list: APKMirror -> Uptodown -> GitHub -> Direct override -> Archive
 DL_SRCS=("apkmirror" "uptodown" "github" "direct" "archive")
 
-if [ "${GITHUB_TOKEN-}" ]; then GH_HEADER="Authorization: token ${GITHUB_TOKEN}"; else GH_HEADER=; fi
+AUTH_TOKEN="${UPDATE_REPO_PAT:-${GITHUB_TOKEN-}}"
+if [ -n "$AUTH_TOKEN" ]; then GH_HEADER="Authorization: token ${AUTH_TOKEN}"; else GH_HEADER=; fi
 NEXT_VER_CODE=${NEXT_VER_CODE:-$(date +'%Y%m%d')}
 OS=$(uname -o)
 
@@ -884,7 +885,7 @@ class Scraper:
             real_is_bundle = is_bundle
             if is_bundle:
                 try:
-                    import io
+                    import zipfile, io
                     with zipfile.ZipFile(io.BytesIO(r_file.content)) as z:
                         names = z.namelist()
                         has_inner_apks = any(n.endswith(".apk") for n in names)
@@ -1583,8 +1584,8 @@ build_rv() {
 	local mode_arg=${args[build_mode]:-} version_mode=${args[version]:-}
 	local app_name=${args[app_name]:-}
 	local app_name_l
-	app_name_l=$(iconv -f utf-8 -t ascii//TRANSLIT <<<"$app_name" 2>/dev/null || echo "$app_name")
-	app_name_l=$(echo "$app_name_l" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g' | sed -E 's/^-+|-+$//g')
+	app_name_l=$(iconv -f utf-8 -t ascii//TRANSLIT <<<"$app_name" 2>/dev/null \vert{}\vert{} echo "$app_name")
+	app_name_l=$(echo "$app_name_l" \vert{} tr '[:upper:]' '[:lower:]' \vert{} sed -E 's/[^a-z0-9]+/-/g' \vert{} sed -E 's/^-+\vert{}-+$//g')
 	local table=${args[table]:-}
 	local dl_from=${args[dl_from]:-}
 	local arch=${args[arch]:-}
@@ -1612,7 +1613,7 @@ build_rv() {
 		done
 	fi
 
-	if [[ -z "$pkg_name" || "$pkg_name" == "UNKNOWN" ]]; then
+	if [[ -z "$pkg_name" \vert{}\vert{} "$pkg_name" == "UNKNOWN" ]]; then
 		epr "empty pkg name, not building ${table}."
 		return 0
 	fi
@@ -1767,7 +1768,7 @@ build_rv() {
 	microg_patch=${microg_patch#*: }
 	if [[ -n "$microg_patch" ]] && [[ "${p_patcher_args[*]}" == *"$microg_patch"* ]]; then
 		wpr "You cant include/exclude microg patch as that's done by rvmm builder automatically."
-		p_patcher_args=("${p_patcher_args[@]//-[ei] ${microg_patch}/}")
+		p_patcher_args=("${p_patcher_args[@]//-[ei]${microg_patch}/}")
 	fi
 
 	local patcher_args patched_apk build_mode

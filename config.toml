@@ -293,6 +293,7 @@ patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
 included-patches = """\
     'Dynamic color' \
     'Browse tweet object' \
+    'TanJid Update Check' \
     """
 apkmirror-dlurl = "https://www.apkmirror.com/apk/x-corp/twitter"
 uptodown-dlurl = "https://twitter.en.uptodown.com/android"

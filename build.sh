@@ -69,41 +69,6 @@ gh_dl "${MODULE_TEMPLATE_DIR}/bin/arm/cmpr" "https://github.com/j-hc/cmpr/releas
 gh_dl "${MODULE_TEMPLATE_DIR}/bin/x86/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86"
 gh_dl "${MODULE_TEMPLATE_DIR}/bin/x64/cmpr" "https://github.com/j-hc/cmpr/releases/latest/download/cmpr-x86_64"
 
-# Pre-fetch custom update check patch if enabled globally or in any app table
-UPDATE_PATCH_FILE="${TEMP_DIR}/tanjid-update-check.mpp"
-export UPDATE_PATCH_FILE
-if [[ "$DEF_ENABLE_UPDATE_CHECKS" == "true" ]] || grep -qE 'enable-update-checks\s*=\s*true' "${1:-config.toml}" 2>/dev/null; then
-	if [[ ! -f "$UPDATE_PATCH_FILE" ]]; then
-		pr "Getting TanJid Update Check patch from dj-tanjid/tanjid-morphe-update-check"
-		auth_token="${UPDATE_REPO_PAT:-${GITHUB_TOKEN:-}}"
-		
-		# Attempt download via gh CLI (works for both public and private repositories)
-		if ! GH_TOKEN="$auth_token" gh release download latest -R "dj-tanjid/tanjid-morphe-update-check" -p "*.mpp" -D "$TEMP_DIR" --clobber >/dev/null 2>&1; then
-			# Fallback to direct GitHub API stream
-			auth_header=()
-			[[ -n "$auth_token" ]] && auth_header=(-H "Authorization: token ${auth_token}")
-			resp=$(curl -sSL "${auth_header[@]}" "https://api.github.com/repos/dj-tanjid/tanjid-morphe-update-check/releases/latest" 2>/dev/null) || true
-			asset_api_url=$(jq -e -r '.assets[0].url // empty' <<<"$resp" 2>/dev/null) || true
-			if [[ -n "$asset_api_url" ]]; then
-				curl -sSL "${auth_header[@]}" -H "Accept: application/octet-stream" "$asset_api_url" -o "$UPDATE_PATCH_FILE" 2>/dev/null || true
-			fi
-		fi
-
-		# Normalize downloaded filename if named differently
-		downloaded_mpp=$(find "$TEMP_DIR" -maxdepth 1 -name "*update-check*.mpp" 2>/dev/null | head -1 || true)
-		if [[ -n "$downloaded_mpp" && "$downloaded_mpp" != "$UPDATE_PATCH_FILE" ]]; then
-			cp -f "$downloaded_mpp" "$UPDATE_PATCH_FILE"
-		fi
-
-		if [[ -f "$UPDATE_PATCH_FILE" && -s "$UPDATE_PATCH_FILE" ]]; then
-			pr "Successfully loaded TanJid Update Check patch"
-		else
-			wpr "Could not download update check patch from dj-tanjid/tanjid-morphe-update-check. (Ensure UPDATE_REPO_PAT secret is configured if repository is private)."
-			rm -f "$UPDATE_PATCH_FILE"
-		fi
-	fi
-fi
-
 # Terminal banner for clear live logging visibility without breaking stream
 print_banner() {
 	echo -e "\n\033[1;35m============================================================\033[0m"

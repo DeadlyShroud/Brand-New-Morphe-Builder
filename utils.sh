@@ -1807,28 +1807,6 @@ build_rv() {
 			abort unreachable
 		fi
 
-		if [[ "${args[enable_update_checks]:-}" == "true" && "$build_mode" == "apk" ]]; then
-			local update_patch="${UPDATE_PATCH_FILE:-$TEMP_DIR/tanjid-update-check.mpp}"
-			if [[ -f "$update_patch" && -s "$update_patch" ]]; then
-				local new_args=("-p" "'$update_patch'")
-				for arg in "${patcher_args[@]}"; do new_args+=("$arg"); done
-				new_args+=("-e" "'TanJid Update Check'")
-				patcher_args=("${new_args[@]}")
-			elif [[ -f "${BIN_DIR}/tanjid-update-check.mpp" ]]; then
-				local new_args=("-p" "'${BIN_DIR}/tanjid-update-check.mpp'")
-				for arg in "${patcher_args[@]}"; do new_args+=("$arg"); done
-				new_args+=("-e" "'TanJid Update Check'")
-				patcher_args=("${new_args[@]}")
-			elif [[ -f "${BIN_DIR}/jhc-update-check.mpp" ]]; then
-				local new_args=("-p" "'${BIN_DIR}/jhc-update-check.mpp'")
-				for arg in "${patcher_args[@]}"; do new_args+=("$arg"); done
-				new_args+=("-e" "'j-hc Update Check'")
-				patcher_args=("${new_args[@]}")
-			else
-				wpr "enable-update-checks is enabled for ${table}, but custom update check patch was not found."
-			fi
-		fi
-
 		local stock_apk_to_patch="${stock_apk}.stripped.apk"
 		cp -f "$stock_apk" "$stock_apk_to_patch"
 		if [[ "$build_mode" == module ]]; then

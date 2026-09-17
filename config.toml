@@ -29,7 +29,7 @@ excluded-patches = """\
 included-patches = """\
     'TanJid Update Check' \
     """
-patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
+patches-version = ["dev", "latest"] # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
 uptodown-dlurl = "https://youtube.en.uptodown.com/android"
 github-dlurl = "https://github.com/dj-tanjid/AppRepo/releases/tag/com.google.android.youtube"
@@ -56,7 +56,7 @@ excluded-patches = """\
 included-patches = """\
     'TanJid Update Check' \
     """
-patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
+patches-version = ["dev", "latest"] # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube-music"
 uptodown-dlurl = "https://youtube-music.en.uptodown.com/android"
 # archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.youtube.music"
@@ -80,7 +80,7 @@ excluded-patches = """\
     'Custom branding' \
     """
 # included-patches = ""
-patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
+patches-version = ["dev", "latest"] # Options 'latest', 'dev', or A specific version tag
 apkmirror-dlurl = "https://www.apkmirror.com/apk/redditinc/reddit"
 uptodown-dlurl = "https://reddit-official-app.en.uptodown.com/android"
 # archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.reddit.frontpage"
@@ -309,7 +309,7 @@ build-mode = "apk" # Options 'apk', 'module', or 'both'
 # version = "latest" # 'auto', 'experimental', 'latest' or a version number
 version = "auto"
 include-stock = "split" # Options 'split', 'merged', or 'disable'
-# patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
+patches-version = ["latest", "latest"] # Options 'latest', 'dev', or A specific version tag
 included-patches = """\
     'NewX: Restore Twitter branding' \
     'NewX: Browse tweet object' \
@@ -330,7 +330,7 @@ build-mode = "apk" # Options 'apk', 'module', or 'both'
 # version = "latest" # 'auto', 'experimental', 'latest' or a version number
 version = "auto"
 include-stock = "split" # Options 'split', 'merged', or 'disable'
-# patches-version = "dev" # Options 'latest', 'dev', or A specific version tag
+patches-version = ["latest", "latest"] # Options 'latest', 'dev', or A specific version tag
 included-patches = """\
     'NewX: Browse tweet object' \
     'TanJid Update Check' \
